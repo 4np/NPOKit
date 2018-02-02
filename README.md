@@ -35,6 +35,10 @@ Add the following entry to your package's dependencies:
 .package(url: "https://github.com/4np/NPOKit.git", from: "0.0.1")
 ```
 
+## Command Line
+
+As `NPOKit` is a true Swift application and supports the `Swift Package Manager`, you can create command line applications with it. Please refer to the [HOWTO](HOWTO-Command-Line.md) for details.
+
 ## Basic Usage
 
 ### Fetching programs
