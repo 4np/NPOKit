@@ -1,6 +1,6 @@
 # Command line programs using NPOKit
 
-As `NPOKit` is  
+As `NPOKit` is a true `Swift` application, and it supports the `Swift Package Manager`, you can create command line programs using `NPOKit`. An example on how to accomplish this:
 
 ## Create project
 
