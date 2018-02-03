@@ -37,7 +37,11 @@ Add the following entry to your package's dependencies:
 
 ## Command Line
 
-As `NPOKit` is a true Swift application and supports the `Swift Package Manager`, you can create command line applications with it. Please refer to the [HOWTO](HOWTO-Command-Line.md) for details.
+As `NPOKit` is a true Swift application and supports the `Swift Package Manager`, you can create command line applications with it. Please refer to the [Command Line HOWTO](HOWTO-Command-Line.md) for details.
+
+## Server side
+
+As a true Swift framework, you can use `NPOKit` in your server-side frameworks as well (e.g. [Vapor](https://vapor.codes), [Perfect](http://perfect.org), [Kitura](http://www.kitura.io), etc). Take a look at the [Command Line HOWTO](HOWTO-Command-Line.md) for a code example.
 
 ## Basic Usage
 
