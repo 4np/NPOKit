@@ -15,3 +15,4 @@ script:
     - xcpretty -v
     - xcodebuild -scheme "NPOKit-Package" -sdk "appletvsimulator11.0" -configuration Release clean build ONLY_ACTIVE_ARCH=NO CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO RUN_CLANG_STATIC_ANALYZER=YES|xcpretty -c
     - swift build --verbose
+    - swift test

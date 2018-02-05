@@ -1,7 +1,7 @@
 # NPOKit
 
 [![Build Status](https://travis-ci.org/4np/NPOKit.svg?branch=master)](https://travis-ci.org/4np/NPOKit)
-[![Release](https://img.shields.io/github/release/4np/NPOKit.svg)](https://github.com/4np/UitzendingGemist/releases/latest)
+[![Release](https://img.shields.io/github/release/4np/NPOKit.svg)](https://github.com/4np/NPOKit/releases/latest)
 [![Platform](https://img.shields.io/badge/platform-tvOS%2011-green.svg?maxAge=3600)](https://developer.apple.com/tvos/)
 [![Swift](https://img.shields.io/badge/language-Swift-ed523f.svg?maxAge=3600)](https://swift.org)
 [![Open Issues](https://img.shields.io/github/issues/4np/NPOKit.svg?maxAge=3600)](https://github.com/4np/NPOKit/issues)
@@ -13,11 +13,9 @@ _Note: This project is in active development so method signatures might change b
 
 ## Installation
 
-Add something similar to the following lines to your `Podfile`. You may need to adjust based on your platform, version/branch etc.
-
 ### Cocoapods
 
-Using cocoapods is the most common way of installing frameworks.
+Using cocoapods is the most common way of installing frameworks. Add something similar to the following lines to your `Podfile`. You may need to adjust based on your platform, version/branch etc.
 
 ```
 source 'https://github.com/CocoaPods/Specs.git'
@@ -35,13 +33,9 @@ Add the following entry to your package's dependencies:
 .package(url: "https://github.com/4np/NPOKit.git", from: "0.0.1")
 ```
 
-## Command Line
+## Command Line & Server Side usage
 
-As `NPOKit` is a true Swift application and supports the `Swift Package Manager`, you can create command line applications with it. Please refer to the [Command Line HOWTO](HOWTO-Command-Line.md) for details.
-
-## Server side
-
-As a true Swift framework, you can use `NPOKit` in your server-side frameworks as well (e.g. [Vapor](https://vapor.codes), [Perfect](http://perfect.org), [Kitura](http://www.kitura.io), etc). Take a look at the [Command Line HOWTO](HOWTO-Command-Line.md) for a code example.
+As `NPOKit` is a true Swift application and supports the `Swift Package Manager`, you can create command line or server side (e.g. [Vapor](https://vapor.codes), [Perfect](http://perfect.org), [Kitura](http://www.kitura.io), etc) applications with it. Please refer to the [Command Line HOWTO](HOWTO-Command-Line.md) on how to get started.
 
 ## Basic Usage
 
@@ -130,7 +124,7 @@ func fetchHeaderImage(for item: Item, completionHandler: @escaping (UIImage?, UR
 
 ## Logging
 
-`NPOKit` support logging through any logging framework your application uses by providing a `logging wrapper`. Below is an example of how to bind based on Dave Wood's [XCGLogger](https://github.com/DaveWoodCom/XCGLogger) that was developed completely in Swift.
+`NPOKit` relies on its host application for logging using a `logging wrapper`. This allows `NPOKit` to not have any dependencies and to enforce or make assumptions on the logging framework your host application uses. Below is an example of how to inject Dave Wood's (Swift 4) [XCGLogger](https://github.com/DaveWoodCom/XCGLogger) to `NPOKit` by creating a `LoggerWrapper`:
 
 ### LoggerWrapper
 
@@ -144,24 +138,34 @@ import NPOKit
 class LoggerWrapper: NPOKitLogger {
     public static let shared = LoggerWrapper()
     
+    // verbose logging
     override func verbose(_ closure: @autoclosure () -> Any?, functionName: StaticString = #function, fileName: StaticString = #file, lineNumber: Int = #line, userInfo: [String: Any] = [:]) {
-        log.verbose(closure, functionName: functionName, fileName: fileName, lineNumber: lineNumber, userInfo: userInfo)
+    	// passthrough to XCGLogger's verbose method
+    	log.verbose(closure, functionName: functionName, fileName: fileName, lineNumber: lineNumber, userInfo: userInfo)
     }
     
+    // debug logging
     override func debug(_ closure: @autoclosure () -> Any?, functionName: StaticString = #function, fileName: StaticString = #file, lineNumber: Int = #line, userInfo: [String: Any] = [:]) {
-        log.debug(closure, functionName: functionName, fileName: fileName, lineNumber: lineNumber, userInfo: userInfo)
+    	// passthrough to XCGLogger's debug method
+    	log.debug(closure, functionName: functionName, fileName: fileName, lineNumber: lineNumber, userInfo: userInfo)
     }
     
+    // info logging
     override func info(_ closure: @autoclosure () -> Any?, functionName: StaticString = #function, fileName: StaticString = #file, lineNumber: Int = #line, userInfo: [String: Any] = [:]) {
-        log.info(closure, functionName: functionName, fileName: fileName, lineNumber: lineNumber, userInfo: userInfo)
+    	// passthrough to XCGLogger's info method
+    	log.info(closure, functionName: functionName, fileName: fileName, lineNumber: lineNumber, userInfo: userInfo)
     }
     
+    // warning logging
     override func warning(_ closure: @autoclosure () -> Any?, functionName: StaticString = #function, fileName: StaticString = #file, lineNumber: Int = #line, userInfo: [String: Any] = [:]) {
-        log.warning(closure, functionName: functionName, fileName: fileName, lineNumber: lineNumber, userInfo: userInfo)
+    	// passthrough to XCGLogger's warning method
+    	log.warning(closure, functionName: functionName, fileName: fileName, lineNumber: lineNumber, userInfo: userInfo)
     }
     
+    // error logging
     override func error(_ closure: @autoclosure () -> Any?, functionName: StaticString = #function, fileName: StaticString = #file, lineNumber: Int = #line, userInfo: [String: Any] = [:]) {
-        log.error(closure, functionName: functionName, fileName: fileName, lineNumber: lineNumber, userInfo: userInfo)
+    	// passthrough to XCGLogger's error method
+    	log.error(closure, functionName: functionName, fileName: fileName, lineNumber: lineNumber, userInfo: userInfo)
     }
 }
 ```
@@ -188,7 +192,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         log.info("Application launched.")
         log.logAppDetails()
         
-        // bind logger to NPOKit
+        // inject logger to NPOKit
         NPOKit.shared.log = LoggerWrapper.shared
         
         return true
@@ -205,8 +209,15 @@ In order to work on `NPOKit` in `Xcode`, you need to generate an Xcode project. 
 swift package generate-xcodeproj
 ```
 
-_Note: the Xcode project will not be comitted to git._
+Before sending a pull request, make sure you used the same coding style and that you lint your code using the most recent [SwiftLint](https://github.com/realm/SwiftLint) release:
 
+```
+$ swiftlint
+...
+Done linting! Found 0 violations, 0 serious in 34 files.
+```
+
+_Note: the Xcode project will not be comitted to git._
 
 # License
 

@@ -22,7 +22,7 @@ public class NPOKit {
     
     // MARK: Initialization
     
-    private init() {
+    public init() {
         log?.info("NPOKit initialized.")
     }
 }

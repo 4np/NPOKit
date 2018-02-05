@@ -6,8 +6,8 @@ As `NPOKit` is a true `Swift` application, and it supports the `Swift Package Ma
 
 ```
 cd ~/Desktop
-mkdir test
-cd test
+mkdir foo
+cd foo
 ```
 
 ## Initialize project
@@ -27,7 +27,7 @@ Open `Package.swift` and add a dependency for [NPOKit](https://github.com/4np/NP
 And make sure you include it as a dependency for your target:
 
 ```
-.target(name: "test", dependencies: [ "NPOKit" ])
+.target(name: "foo", dependencies: [ "NPOKit" ])
 ```
 
 Your `Package.swift` should now look like this:
@@ -36,12 +36,12 @@ Your `Package.swift` should now look like this:
 import PackageDescription
 
 let package = Package(
-    name: "test",
+    name: "foo",
     dependencies: [
         .package(url: "https://github.com/4np/NPOKit.git", from: "0.0.1")
     ],
     targets: [
-        .target(name: "test", dependencies: [ "NPOKit" ])
+        .target(name: "foo", dependencies: [ "NPOKit" ])
     ]
 )
 ```
@@ -57,12 +57,12 @@ swift package generate-xcodeproj
 and launch Xcode:
 
 ```
-open test.xcodeproj
+open foo.xcodeproj
 ```
 
 ## Add code to fetch programs
 
-Open `Sources/test/main.swift` for editing and replace it with the following code:
+Open `Sources/foo/main.swift` for editing and replace it with the following code:
 
 ```
 import Foundation
@@ -101,7 +101,7 @@ If all was done correctly, you should be able to build and run your test project
 
 ```
 swift build
-./.build/debug/test
+./.build/debug/foo
 ```
 
 ## Result
@@ -109,7 +109,7 @@ swift build
 If all went well, your compiled program should list the first batch of twenty programs. Something like this:
 
 ```
-$ ./.build/debug/test
+$ ./.build/debug/foo
 Fetched 20 programs:
 
 Program 1: De Luizenmoeder
