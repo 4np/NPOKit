@@ -78,7 +78,12 @@ public extension NPOKit {
         }
         
         // create task
-        return URLSession.shared.dataTask(with: request, completionHandler: completionHandler)
+        return URLSession.shared.dataTask(with: request, completionHandler: { (data, response, error) in
+            // on the main queue as this generally involves UI
+            DispatchQueue.main.sync {
+                completionHandler(data, response, error)
+            }
+        })
     }
     
     // MARK: User Agent

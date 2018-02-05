@@ -25,14 +25,13 @@ public extension NPOKit {
         let session = URLSession.shared
         var task: URLSessionDataTask!
         task = session.dataTask(with: request) { (data, _, error) in
-            guard let data = data, let image = UXImage(data: data) else {
-                DispatchQueue.main.async {
-                    completionHandler(nil, task, error)
+            DispatchQueue.main.sync {
+                var image: UXImage?
+                
+                if let data = data, let uxImage = UXImage(data: data) {
+                    image = uxImage
                 }
-                return
-            }
-            
-            DispatchQueue.main.async {
+                
                 completionHandler(image, task, error)
             }
         }
