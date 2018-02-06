@@ -31,7 +31,7 @@ pod 'NPOKit', :git => 'https://github.com/4np/NPOKit.git'
 
 Add the following entry to your package's dependencies:
 
-```
+```swift
 .package(url: "https://github.com/4np/NPOKit.git", from: "0.0.1")
 ```
 
@@ -45,7 +45,7 @@ As `NPOKit` is a true Swift application and supports the `Swift Package Manager`
 
 Below you'll find some sample code on how to implement some paginated fetching of programs. Unfortunately the API currently does not support sorting in alphabetical order, so the result will be based by the sort order the NPO returns (which is by most used). 
 
-```
+```swift
 func getProgramPaginator(successHandler: @escaping Paginator<Program>.SuccessHandler,
                          failureHandler: Paginator<Program>.FailureHandler? = nil) -> Paginator<Program>
 ```
@@ -74,7 +74,7 @@ class MyViewController: UIViewController {
         // set up paginator
         paginator = NPOKit.shared.getProgramPaginator { [weak self] (result) in
             switch result {
-            case .success(let paginator, let programs):
+            case .success(_, let programs):
             		// append the new batch of programs
                 self?.programs.append(contentsOf: programs)
             case .failure(let error as NPOError):
@@ -109,7 +109,7 @@ extension ProgramsViewController: UIScrollViewDelegate {
 
 Fetching episodes works very much like fetching programs (see above), it just requires a `program` argument when setting up the paginator:
 
-```
+```swift
 func getEpisodePaginator(for item: Item, completionHandler: @escaping (Result<(paginator: Paginator, items: [Episode])>) -> Void) -> Paginator<Episode>
 ```
 
@@ -117,7 +117,7 @@ func getEpisodePaginator(for item: Item, completionHandler: @escaping (Result<(p
 
 `Item` bases resources (like `Program` and `Episode`) may provide images for different usages. The most common way you would use those images on `tvOS` are for populating collection view cells, or by showing a header:
 
-```
+```swift
 func fetchHeaderImage(for item: Item, completionHandler: @escaping (Result<(UXImage, URLSessionDataTask)>) -> Void) -> URLSessionDataTask? 
 func fetchCollectionImage(for item: Item, completionHandler: @escaping (Result<(UXImage, URLSessionDataTask)>) -> Void) -> URLSessionDataTask?
 ```
@@ -130,7 +130,7 @@ func fetchCollectionImage(for item: Item, completionHandler: @escaping (Result<(
 
 First, you need to set up the `LoggerWrapper` which inherits from `NPOKitLogger`. It basically normalizes the logging calls to your logging framework of choice, in this case `XCGLogger`:
 
-```
+```swift
 import Foundation
 import NPOKit
 
@@ -174,7 +174,7 @@ class LoggerWrapper: NPOKitLogger {
 
 In your `AppDelegate`'s `application:didFinishLaunchingWithOptions:` you need to bind your `LoggerWrapper` to `NPOKit`, and logging will work. Set the loglevel to `debug` to get debug information or `verbose` to more elaborate information like `GET` and `POST` requests.
 
-```
+```swift
 import XCGLogger
 import NPOKit
 
@@ -205,13 +205,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 In order to work on `NPOKit` in `Xcode`, you need to generate an Xcode project. Run the following command in the project root:
 
-```
+```bash
 swift package generate-xcodeproj
 ```
 
 Before sending a pull request, make sure you used the same coding style and that you lint your code using the most recent [SwiftLint](https://github.com/realm/SwiftLint) release:
 
-```
+```bash
 $ swiftlint
 ...
 Done linting! Found 0 violations, 0 serious in 34 files.
