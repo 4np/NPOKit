@@ -25,112 +25,77 @@ internal enum Genre: String {
 }
 
 public extension NPOKit {
-
-    // MARK: Program paginator
     
-    func getProgramPaginator(successHandler: @escaping Paginator<Program>.SuccessHandler,
-                             failureHandler: Paginator<Program>.FailureHandler? = nil) -> Paginator<Program> {
-        return getProgramPaginator(using: nil, successHandler: successHandler, failureHandler: failureHandler)
+    // MARK: Programs
+
+    func getProgramPaginator(completionHandler: @escaping Paginator<Program>.CompletionHandler) -> Paginator<Program> {
+        return getProgramPaginator(using: nil, completionHandler: completionHandler)
     }
     
-    func getProgramPaginator(using programFilters: [ProgramFilter]?,
-                             successHandler: @escaping Paginator<Program>.SuccessHandler,
-                             failureHandler: Paginator<Program>.FailureHandler? = nil) -> Paginator<Program> {
+    func getProgramPaginator(using programFilters: [ProgramFilter]?, completionHandler: @escaping Paginator<Program>.CompletionHandler) -> Paginator<Program> {
         // define how to fetch paginated data
-        let fetchHandler: Paginator<Program>.FetchHandler = { [weak self] (paginator, page, pageSize) in
+        let fetchHandler: Paginator<Item>.FetchHandler = { [weak self] (paginator, page, pageSize) in
             let endpoint = self?.getEndpoint(for: "page/catalogue", page: page, using: programFilters) ?? "page/catalogue?page=\(page)"
-            
-            self?.getPrograms(
-                forEndpoint: endpoint,
-                page: page,
-                pageSize: pageSize,
-                success: { (programs, numberOfPages, filters) in paginator.success(results: programs, numberOfPages: numberOfPages, filters: filters) },
-                failure: { paginator.failure() })
+            self?.fetchModel(ofType: PagedItems.self, forEndpoint: endpoint, postData: nil, completionHandler: { (result) in
+                
+                switch result {
+                case .success(let pagedItems):
+                    guard let itemData = pagedItems.components?.filter({ $0.type == .grid }).first?.data else {
+                        paginator.completion(result: .failure(NPOError.unknownError))
+                        return
+                    }
+                    
+                    let totalResults = itemData.total
+                    let numberOfPages = Int(ceil(Double(totalResults) / Double(pageSize)))
+                    
+                    // get the filters
+                    let filters = pagedItems.components?.filter({ $0.type == .filter }).first?.filters
+
+                    paginator.completion(result: .success((itemData.items, numberOfPages, filters)))
+                case .failure(let error):
+                    paginator.completion(result: .failure(error))
+                }
+
+            })
         }
         
         // initialize the paginator
-        return Paginator(ofType: Program.self, pageSize: 20, fetchHandler: fetchHandler, successHandler: successHandler, failureHandler: failureHandler)
+        return Paginator(ofType: Program.self, pageSize: 20, fetchHandler: fetchHandler, completionHandler: completionHandler)
     }
+
+    // MARK: Endpoint
     
     private func getEndpoint(for base: String, page: Int, using programFilters: [ProgramFilter]?) -> String {
         var endpoint = "\(base)?page=\(page)"
-        
+
         guard let programFilters = programFilters else { return endpoint }
-        
+
         for programFilter in programFilters {
             guard let value = programFilter.option.value else { continue }
+            
+            // set the filter value
             endpoint += "&\(programFilter.filter.argumentName)=\(value)"
             
-            // when the current filter is a date filter and we're trying
-            // to filter for a particular day we should also send dateTo
-            if programFilter.filter.argumentName == "dateFrom" && !programFilter.option.title.contains("Afgelopen") {
-                endpoint += "&dateTo=\(value)"
-            }
+            // check if this is a date filter
+            guard programFilter.filter.argumentName == "dateFrom" else { continue }
+            
+            // if so, we need to set an end date
+            let dateToValue = (programFilter.option.title.contains("Afgelopen")) ? today : value
+            endpoint += "&dateTo=\(dateToValue)"
         }
-        
+
         return endpoint
     }
     
-    private func getPrograms(forEndpoint endpoint: String,
-                             page: Int,
-                             pageSize: Int,
-                             success: @escaping (_ programs: [Program], _ numberOfPages: Int, _ filters: [Filter]?) -> Void,
-                             failure: @escaping () -> Void) {
-        // define data task completion handler
-        let completionHandler: (Data?, URLResponse?, Error?) -> Void = { [weak self] (data, response, error) in
-            guard error == nil, let httpResponse = response as? HTTPURLResponse, (httpResponse.statusCode == 200), let data = data else {
-                self?.log?.error("Request failed... (\(String(describing: error?.localizedDescription))) \(String(describing: response))")
-                failure()
-                return
-            }
-            
-            let decoder = JSONDecoder()
-            if #available(OSX 10.12, iOS 10.0, watchOS 3.0, tvOS 10.0, *) {
-                decoder.dateDecodingStrategy = .iso8601
-            }
-            
-//            guard let pagedItems = try? decoder.decode(PagedItems.self, from: data) else {
-//                DDLogError("Could not decode JSON")
-//                failure()
-//                return
-//            }
-
-            let pagedItems: PagedItems
-            do {
-                pagedItems = try decoder.decode(PagedItems.self, from: data)
-            } catch {
-                // see https://developer.apple.com/documentation/swift/decodingerror
-                self?.log?.error("Could not decode JSON (\(error)))")
-                failure()
-                return
-            }
-            
-            // get the program data
-            guard let itemData = pagedItems.components?.filter({ $0.type == .grid }).first?.data else {
-                self?.log?.error("Could not get program data, end of pagination?")
-                failure()
-                return
-            }
-            
-            // determine the number of pages
-            let totalResults = itemData.total
-            let numberOfPages = Int(ceil(Double(totalResults) / Double(pageSize)))
-            
-            // get the filters
-            let filters = pagedItems.components?.filter({ $0.type == .filter }).first?.filters
-            
-            // success handler
-            success(itemData.items, numberOfPages, filters)
+    // MARK: Today's date
+    
+    private var today: String {
+        let now = Date()
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        if let timeZone = TimeZone(abbreviation: "CET") {
+            dateFormatter.timeZone = timeZone
         }
-        
-        // create task
-        guard let task = dataTask(forEndpoint: endpoint, postData: nil, completionHandler: completionHandler) else {
-            log?.error("Could not create data task...")
-            failure()
-            return
-        }
-
-        // execute task
-        task.resume()
+        return dateFormatter.string(from: now)
     }
 }

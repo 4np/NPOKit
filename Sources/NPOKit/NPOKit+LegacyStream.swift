@@ -9,34 +9,38 @@
 import Foundation
 
 public extension NPOKit {
-    func legacyPlaylist(for item: Item, completionHandler: @escaping (LegacyPlaylist?, Error?) -> Void) {
-        legacyStream(for: item) { [weak self] (stream, error) in
-            guard let url = stream?.hlsItem()?.url else {
-                completionHandler(nil, error ?? NSError(domain: "eu.osx.tvos.NPO.error", code: -2, userInfo: nil))
-                return
+    func legacyPlaylist(for item: Item, completionHandler: @escaping (Result<LegacyPlaylist>) -> Void) {
+        legacyStream(for: item) { [weak self] (result) in
+            switch result {
+            case .success(let legacyStream):
+                guard let url = legacyStream.hlsItem()?.url else {
+                    let error: NPOError = .missingFairplayStream
+                    completionHandler(.failure(error))
+                    return
+                }
+                
+                self?.fetchModel(ofType: LegacyPlaylist.self, forURL: url, postData: nil, completionHandler: completionHandler)
+            case .failure(let error):
+                completionHandler(.failure(error))
             }
-            
-            // fetch playlist
-            self?.fetchModel(ofType: LegacyPlaylist.self, forURL: url, postData: nil, completionHandler: completionHandler)
         }
     }
     
-    func legacyStream(for item: Item, completionHandler: @escaping (LegacyStream?, Error?) -> Void) {
-        getToken { [weak self] (token, error) in
-            guard let token = token else {
-                completionHandler(nil, error ?? NSError(domain: "eu.osx.tvos.NPO.error", code: -1, userInfo: nil))
-                return
+    func legacyStream(for item: Item, completionHandler: @escaping (Result<LegacyStream>) -> Void) {
+        getToken { [weak self] (result) in
+            switch result {
+            case .success(let token):
+                self?.fetchModel(ofType: LegacyStream.self, forLegacyEndpoint: "/app.php/\(item.id)?adaptive=yes&token=\(token.value)", postData: nil, completionHandler: completionHandler)
+            case .failure(let error):
+                completionHandler(.failure(error))
             }
-
-            // fetch stream
-            self?.fetchModel(ofType: LegacyStream.self, forLegacyEndpoint: "/app.php/\(item.id)?adaptive=yes&token=\(token.value)", postData: nil, completionHandler: completionHandler)
         }
     }
     
-    private func getToken(completionHandler: @escaping (Token?, Error?) -> Void) {
+    private func getToken(completionHandler: @escaping (Result<Token>) -> Void) {
         // use cached token?
         if let token = self.legacyToken, !token.hasExpired {
-            completionHandler(token, nil)
+            completionHandler(.success(token))
             return
         }
         

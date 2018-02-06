@@ -27,3 +27,11 @@ extension Filter: Equatable { }
 public func == (lhs: Filter, rhs: Filter) -> Bool {
     return lhs.type == rhs.type && lhs.argumentName == rhs.argumentName
 }
+
+// MARK: CustomDebugStringConvertible
+
+extension Filter: CustomDebugStringConvertible {
+    public var debugDescription: String {
+        return "NPOKit.Filter(title: \"\(title)\", options: \(options))"
+    }
+}

@@ -117,3 +117,11 @@ extension Item {
         return nil
     }
 }
+
+// MARK: CustomDebugStringConvertible
+
+extension Item: CustomDebugStringConvertible {
+    public var debugDescription: String {
+        return "'\(title)' (\(id))"
+    }
+}

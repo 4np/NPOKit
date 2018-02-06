@@ -10,8 +10,7 @@ import Foundation
 
 public class Paginator<T> where T: Pageable {
     public typealias FetchHandler = (_ paginator: Paginator<T>, _ page: Int, _ pageSize: Int) -> Void
-    public typealias SuccessHandler = (Paginator, [T]) -> Void
-    public typealias FailureHandler = (Paginator) -> Void
+    public typealias CompletionHandler = (Result<(paginator: Paginator, items: [T])>) -> Void
     
     private enum PaginatorRequestStatus {
         case none, inProgress, done
@@ -19,8 +18,7 @@ public class Paginator<T> where T: Pageable {
     private var requestStatus: PaginatorRequestStatus = .none
     
     private var fetchHandler: FetchHandler
-    private var successHandler: SuccessHandler
-    private var failureHandler: FailureHandler?
+    private var completionHandler: CompletionHandler
     
     public private(set) var page: Int = 0
     public private(set) var pageSize: Int = 20
@@ -30,29 +28,24 @@ public class Paginator<T> where T: Pageable {
     init<T>(ofType: T.Type,
             pageSize: Int,
             fetchHandler: @escaping FetchHandler,
-            successHandler: @escaping SuccessHandler,
-            failureHandler: FailureHandler? = nil) where T: Pageable {
+            completionHandler: @escaping CompletionHandler) where T: Pageable {
         self.pageSize = pageSize
         self.fetchHandler = fetchHandler
-        self.successHandler = successHandler
-        self.failureHandler = failureHandler
+        self.completionHandler = completionHandler
     }
     
-    public func success(results: [T], numberOfPages: Int?, filters: [Filter]?) {
+    public func completion(result: Result<(items: [T], numberOfPages: Int, filters: [Filter]?)>) {
         requestStatus = .done
-        self.page += 1
-        if let numberOfPages = numberOfPages {
+        
+        switch result {
+        case .success(let items, let numberOfPages, let filters):
+            self.page += 1
             self.numberOfPages = numberOfPages
-        }
-        if let filters = filters {
             self.filters = filters
+            completionHandler(.success((self, items)))
+        case .failure(let error):
+            completionHandler(.failure(error))
         }
-        successHandler(self, results)
-    }
-    
-    public func failure() {
-        requestStatus = .done
-        failureHandler?(self)
     }
     
     public func next() {

@@ -10,7 +10,7 @@ import Foundation
 
 public extension NPOKit {
     
-    func stream(for item: Item, completionHandler: @escaping (Stream?, Error?) -> Void) {
+    func stream(for item: Item, completionHandler: @escaping (Result<Stream>) -> Void) {
         // tv payload
         let payload = "{\"profile\":\"hls\",\"viewer\":1061049068313,\"options\":{\"startOver\":false}}"
         let jsonPayloadData = payload.data(using: .utf8)

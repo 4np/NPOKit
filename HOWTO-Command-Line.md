@@ -69,23 +69,32 @@ import Foundation
 import NPOKit
 
 // setup the paginator that fetched programs
-let paginator = NPOKit.shared.getProgramPaginator(successHandler: { (paginator, programs) in
-    print("Fetched \(programs.count) programs:\n")
-    
-    // iterate over programs
-    for (index, program) in programs.enumerated() {
-        // print the program name
-        print("Program \(index + 1): \(program.title)")
+let paginator = NPOKit.shared.getProgramPaginator { [weak self] (result) in
+    switch result {
+    case .success(let paginator, let programs):
+        print("Fetched \(programs.count) programs:\n")
+        
+        // iterate over programs
+        for (index, program) in programs.enumerated() {
+            // print the program name
+            print("Program \(index + 1): \(program.title)")
+        }
+        
+        // and exit
+        exit(EXIT_SUCCESS)
+    case .failure(let error as NPOError):
+        // something went wrong, display an error message
+        print("Error fetching programs (\(error.localizedDescription))")
+        
+        // and exit
+        exit(EXIT_FAILURE)
+    case.failure(let error):
+        // something went wrong, display an error message
+        print("Error fetching programs (\(error.localizedDescription))")
+
+        // and exit
+        exit(EXIT_FAILURE)
     }
-    
-    // and exit
-    exit(EXIT_SUCCESS)
-}) { (paginator) in
-    // something went wrong, display an error message
-    print("Error fetching programs")
-    
-    // end exit
-    exit(EXIT_FAILURE)
 }
 
 // fetch the first page of programs

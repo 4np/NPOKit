@@ -56,8 +56,8 @@ This code assumes you use a _scroll view_ in your user interface, so something l
 import NPOKit
 
 class MyViewController: UIViewController {
-    private var paginator: Paginator<Item>?
-    private var programs = [Item]()
+    private var paginator: Paginator<Program>?
+    private var programs = [Program]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -70,16 +70,17 @@ class MyViewController: UIViewController {
     
     private func setupPaginator() {
         // set up paginator
-        paginator = NPOKit.shared.getProgramPaginator(successHandler: { [weak self] (paginator, programs) in
-            // on the main queue as this might involve UI updating
-            DispatchQueue.main.async {
+        paginator = NPOKit.shared.getProgramPaginator { [weak self] (result) in
+            switch result {
+            case .success(let paginator, let programs):
             		// append the new batch of programs
                 self?.programs.append(contentsOf: programs)
-                // TODO: make sure you update the UI accordingly...
+            case .failure(let error as NPOError):
+                log.error("npo failure: \(error.localizedDescription)")
+            case.failure(let error):
+                log.error("general failure: \(error.localizedDescription)")
             }
-        }, failureHandler: { (_) in
-        	print("failure :'(")
-        })
+        }
         
         // fetch the first page
         paginator?.next()
@@ -107,9 +108,7 @@ extension ProgramsViewController: UIScrollViewDelegate {
 Fetching episodes works very much like fetching programs (see above), it just requires a `program` argument when setting up the paginator:
 
 ```
-func getEpisodePaginator(for item: Item,
-                         successHandler: @escaping Paginator<Episode>.SuccessHandler,
-                         failureHandler: Paginator<Episode>.FailureHandler? = nil) -> Paginator<Episode>
+func getEpisodePaginator(for item: Item, completionHandler: @escaping (Result<(paginator: Paginator, items: [Episode])>) -> Void) -> Paginator<Episode>
 ```
 
 ### Fetching images
@@ -117,9 +116,8 @@ func getEpisodePaginator(for item: Item,
 `Item` bases resources (like `Program` and `Episode`) may provide images for different usages. The most common way you would use those images on `tvOS` are for populating collection view cells, or by showing a header:
 
 ```
-func fetchCollectionImage(for item: Item, completionHandler completed: @escaping (UIImage?, URLSessionDataTask?, Error?) -> Void) -> URLSessionDataTask?
-
-func fetchHeaderImage(for item: Item, completionHandler: @escaping (UIImage?, URLSessionDataTask?, Error?) -> Void) -> URLSessionDataTask?
+func fetchHeaderImage(for item: Item, completionHandler: @escaping (Result<(UXImage, URLSessionDataTask)>) -> Void) -> URLSessionDataTask? 
+func fetchCollectionImage(for item: Item, completionHandler: @escaping (Result<(UXImage, URLSessionDataTask)>) -> Void) -> URLSessionDataTask?
 ```
 
 ## Logging

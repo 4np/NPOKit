@@ -35,3 +35,11 @@ extension FilterOption: Equatable { }
 public func == (lhs: FilterOption, rhs: FilterOption) -> Bool {
     return lhs.value == rhs.value && lhs.title == rhs.title
 }
+
+// MARK: CustomDebugStringConvertible
+
+extension FilterOption: CustomDebugStringConvertible {
+    public var debugDescription: String {
+        return "NPOKit.FilterOption(title: \"\(title)\")"
+    }
+}

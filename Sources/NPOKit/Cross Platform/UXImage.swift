@@ -1,9 +1,11 @@
 //
-//  CrossPlatform.swift
+//  UXImage.swift
 //  NPOKitPackageDescription
 //
-//  Created by Jeroen Wesbeek on 02/02/2018.
+//  Created by Jeroen Wesbeek on 06/02/2018.
 //
+
+import Foundation
 
 import Foundation
 

@@ -12,27 +12,24 @@ public extension NPOKit {
     
     // MARK: Private methods
     
-    private func fetchImage(url: URL, completionHandler: @escaping (UXImage?, URLSessionDataTask?, Error?) -> Void) -> URLSessionDataTask? {
+    private func fetchImage(url: URL, completionHandler: @escaping (Result<(UXImage, URLSessionDataTask)>) -> Void) -> URLSessionDataTask? {
         return fetchImage(url: url, cachePolicy: .returnCacheDataElseLoad, completionHandler: completionHandler)
     }
     
-    private func fetchImage(url: URL, cachePolicy: URLRequest.CachePolicy, completionHandler: @escaping (UXImage?, URLSessionDataTask?, Error?) -> Void) -> URLSessionDataTask? {
-        guard let cacheInterval = TimeInterval(exactly: 600) else {
-            return nil
-        }
-        
-        let request = URLRequest(url: url, cachePolicy: .returnCacheDataElseLoad, timeoutInterval: cacheInterval)
+    private func fetchImage(url: URL, cachePolicy: URLRequest.CachePolicy, completionHandler: @escaping (Result<(UXImage, URLSessionDataTask)>) -> Void) -> URLSessionDataTask? {
+        let request = URLRequest(url: url, cachePolicy: cachePolicy, timeoutInterval: cacheInterval)
         let session = URLSession.shared
         var task: URLSessionDataTask!
         task = session.dataTask(with: request) { (data, _, error) in
             DispatchQueue.main.sync {
-                var image: UXImage?
-                
-                if let data = data, let uxImage = UXImage(data: data) {
-                    image = uxImage
+                if let error = error {
+                    completionHandler(.failure(error))
+                } else if let data = data, let image = UXImage(data: data) {
+                    completionHandler(.success((image, task)))
+                } else {
+                    let error: NPOError = .missingImage
+                    completionHandler(.failure(error))
                 }
-                
-                completionHandler(image, task, error)
             }
         }
         
@@ -44,12 +41,12 @@ public extension NPOKit {
     
     // MARK: Public API
     
-    func fetchCollectionImage(for item: Item, completionHandler completed: @escaping (UXImage?, URLSessionDataTask?, Error?) -> Void) -> URLSessionDataTask? {
+    func fetchCollectionImage(for item: Item, completionHandler: @escaping (Result<(UXImage, URLSessionDataTask)>) -> Void) -> URLSessionDataTask? {
         guard let url = item.collectionImageURL else { return nil }
-        return fetchImage(url: url, completionHandler: completed)
+        return fetchImage(url: url, completionHandler: completionHandler)
     }
     
-    func fetchHeaderImage(for item: Item, completionHandler: @escaping (UXImage?, URLSessionDataTask?, Error?) -> Void) -> URLSessionDataTask? {
+    func fetchHeaderImage(for item: Item, completionHandler: @escaping (Result<(UXImage, URLSessionDataTask)>) -> Void) -> URLSessionDataTask? {
         guard let url = item.headerImageURL else { return nil }
         return fetchImage(url: url, completionHandler: completionHandler)
     }
