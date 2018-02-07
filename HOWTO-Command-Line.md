@@ -129,27 +129,27 @@ If all went well, your compiled program should list the first batch of twenty pr
 
 ```bash
 $ ./.build/debug/top20
-Fetched 20 programs:
+Top 20 TV Programs:
 
-Program 1: De Luizenmoeder
-Program 2: Wie is de Mol?
-Program 3: Brugklas
-Program 4: Vier Handen Op Eén Buik
-Program 5: Jinek
-Program 6: Floortje Naar Het Einde Van De Wereld
-Program 7: Over Mijn Lijk
-Program 8: De Wereld Draait Door
-Program 9: Zondag met Lubach
-Program 10: Door het hart van China
-Program 11: Smeris
-Program 12: Apple Tree Yard
-Program 13: De slimste mens
-Program 14: NOS Studio Sport Eredivisie
-Program 15: SpangaS
-Program 16: Dit Was Het Nieuws
-Program 17: De Rijdende Rechter
-Program 18: Ik Vertrek
-Program 19: Spoorloos
-Program 20: The Dateables
-$
+1: De Luizenmoeder
+2: Wie is de Mol?
+3: Brugklas
+4: Vier Handen Op Eén Buik
+5: Floortje Naar Het Einde Van De Wereld
+6: Zondag met Lubach
+7: Jinek
+8: Ik Vertrek
+9: De Wereld Draait Door
+10: Door het hart van China
+11: Smeris
+12: Dit Was Het Nieuws
+13: SpangaS
+14: Apple Tree Yard
+15: De Rijdende Rechter
+16: NOS Studio Sport Eredivisie
+17: 2Doc:
+18: Het Mooiste Meisje van de Klas
+19: Spoorloos
+20: Louis Theroux: Dark States
+$ 
 ```
