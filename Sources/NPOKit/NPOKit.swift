@@ -15,6 +15,8 @@ public class NPOKit {
     internal var apiURL = URL(string: "https://start-api.npo.nl")
     internal var legacyAPIURL = URL(string: "https://ida.omroep.nl")
     //swiftlint:disable:next force_unwrapping
+    internal let timeoutInterval = TimeInterval(exactly: 20)!
+    //swiftlint:disable:next force_unwrapping
     internal let cacheInterval = TimeInterval(exactly: 600)!
     public var log: NPOKitLogger?
     

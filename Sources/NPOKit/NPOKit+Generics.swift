@@ -69,7 +69,7 @@ public extension NPOKit {
     
     internal func dataTask(forUrl url: URL, postData: Data?, cachePolicy: URLRequest.CachePolicy, completionHandler: @escaping (Result<(Data, URLResponse)>) -> Void) -> URLSessionDataTask {
         // create request
-        var request = URLRequest(url: url, cachePolicy: cachePolicy, timeoutInterval: cacheInterval)
+        var request = URLRequest(url: url, cachePolicy: cachePolicy, timeoutInterval: self.timeoutInterval)
         request.addValue(getUserAgent(), forHTTPHeaderField: "User-Agent")
         request.addValue("application/json", forHTTPHeaderField: "Accept")
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")

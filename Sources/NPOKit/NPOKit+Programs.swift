@@ -55,7 +55,6 @@ public extension NPOKit {
                 case .failure(let error):
                     paginator.completion(result: .failure(error))
                 }
-
             })
         }
         
