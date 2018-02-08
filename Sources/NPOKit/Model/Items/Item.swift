@@ -20,7 +20,17 @@ public enum ItemType: String, Codable {
 
 public struct Item: Pageable {
     var id: String
-    public private(set) var title: String
+    private var itemTitle: String?
+    public var title: String {
+        // Check if the title was defined
+        if let title = self.itemTitle {
+            return title
+        }
+        
+        // In the rare occassion the title wasn't defined,
+        // try to obtain the title from the images
+        return self.images.title ?? "?"
+    }
     public private(set) var description: String?
     private var typeName: String
     private var channelName: String?
@@ -52,7 +62,7 @@ public struct Item: Pageable {
     
     enum CodingKeys: String, CodingKey {
         case id = "id"
-        case title
+        case itemTitle = "title"
         case description
         case typeName = "type"
         case channelName = "channel"
