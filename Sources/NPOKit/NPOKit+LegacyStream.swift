@@ -13,7 +13,7 @@ public extension NPOKit {
         legacyStream(for: item) { [weak self] (result) in
             switch result {
             case .success(let legacyStream):
-                guard let url = legacyStream.hlsItem()?.url else {
+                guard let url = legacyStream.bestStreamItem()?.url else {
                     let error: NPOError = .missingFairplayStream
                     completionHandler(.failure(error))
                     return
