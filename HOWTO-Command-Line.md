@@ -21,7 +21,7 @@ swift package init --type executable
 Open `Package.swift` and add a dependency for [NPOKit](https://github.com/4np/NPOKit):
 
 ```swift
-.package(url: "https://github.com/4np/NPOKit.git", from: "0.0.2")
+.package(url: "https://github.com/4np/NPOKit.git", from: "0.0.3")
 ```
 
 And make sure you include it as a dependency for your target:
@@ -42,7 +42,7 @@ let package = Package(
     name: "top20",
     dependencies: [
         // Dependencies declare other packages that this package depends on.
-        .package(url: "https://github.com/4np/NPOKit.git", from: "0.0.2")
+        .package(url: "https://github.com/4np/NPOKit.git", from: "0.0.3")
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
