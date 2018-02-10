@@ -30,7 +30,18 @@ public extension NPOKit {
         getToken { [weak self] (result) in
             switch result {
             case .success(let token):
-                self?.fetchModel(ofType: LegacyStream.self, forLegacyEndpoint: "/app.php/\(item.id)?adaptive=yes&token=\(token.value)", postData: nil, completionHandler: completionHandler)
+                self?.fetchModel(ofType: LegacyStream.self, forLegacyEndpoint: "/app.php/\(item.id!)?adaptive=yes&token=\(token.value)", postData: nil, completionHandler: completionHandler)
+            case .failure(let error):
+                completionHandler(.failure(error))
+            }
+        }
+    }
+    
+    func legacyStream(for liveStream: LiveStream, completionHandler: @escaping (Result<LegacyStream>) -> Void) {
+        getToken { [weak self] (result) in
+            switch result {
+            case .success(let token):
+                self?.fetchModel(ofType: LegacyStream.self, forLegacyEndpoint: "/app.php/\(liveStream.id)?adaptive=yes&token=\(token.value)", postData: nil, completionHandler: completionHandler)
             case .failure(let error):
                 completionHandler(.failure(error))
             }

@@ -17,6 +17,10 @@ public struct LegacyStream: Codable {
         case items
     }
     
+    public var url: URL? {
+        return bestStreamItem()?.url
+    }
+    
     internal func bestStreamItem() -> LegacyStreamItem? {
         let flatItems = items.flatMap({ $0 })
         
@@ -27,6 +31,8 @@ public struct LegacyStream: Codable {
         } else if let item = flatItems.first(where: { $0.type == .normal }) {
             return item
         } else if let item = flatItems.first(where: { $0.type == .low }) {
+            return item
+        } else if let item = flatItems.first(where: { $0.type == .live }) {
             return item
         }
         

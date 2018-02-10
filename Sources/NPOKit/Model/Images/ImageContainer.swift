@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct ImageContainer: Codable {
+public struct ImageContainer: Codable {
     var original: NPOImage?
     var header: NPOImage?
     var gridTile: NPOImage?

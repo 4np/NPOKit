@@ -13,6 +13,7 @@ public enum LegacyStreamItemType: String, Codable {
     case high = "Hoog"
     case normal = "Normaal"
     case low = "Laag"
+    case live = "Live"
 }
 
 public enum LegacyStreamItemFormat: String, Codable {
@@ -30,9 +31,9 @@ public struct LegacyStreamItem: Codable {
         var components = URLComponents(url: rawURL, resolvingAgainstBaseURL: false)
         
         // remove JSONP query items
-        let queryItems = components?.queryItems?.filter { !["type", "callback"].contains($0.name) }
+        let queryItems = components?.queryItems?.filter { !["type", "callback", "protection"].contains($0.name) }
         components?.queryItems = queryItems
-        
+
         return components?.url
     }
     

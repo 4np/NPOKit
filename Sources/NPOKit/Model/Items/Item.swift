@@ -18,8 +18,8 @@ public enum ItemType: String, Codable {
     case fragment
 }
 
-public struct Item: Pageable {
-    var id: String
+public struct Item: Pageable, ImageFetchable {
+    var id: String?
     private var itemTitle: String?
     public var title: String {
         // Check if the title was defined
@@ -36,7 +36,7 @@ public struct Item: Pageable {
     private var channelName: String?
     public private(set) var genres: [GenreItem]
     public private(set) var broadcasters: [String]
-    var images: ImageContainer
+    public private(set) var images: ImageContainer
     public private(set) var isOnlyOnNPOPlus: Bool
     
     // franchise
@@ -106,32 +106,13 @@ extension Item {
         guard let name = channelName, let channel = Channel(rawValue: name) else { return nil }
         return channel
     }
-    
-    // MARK: Image URLs
-    
-    var collectionImageURL: URL? {
-        // try to return the source in order of preference
-        if let source = images.gridTile?.formats.tablet?.source { // generally 320x180
-            return source
-        }
-        
-        return nil
-    }
-    
-    var headerImageURL: URL? {
-        // try to return the source in order of preference
-        if let source = images.header?.formats.tv?.source {
-            return source
-        }
-        
-        return nil
-    }
 }
 
 // MARK: CustomDebugStringConvertible
 
 extension Item: CustomDebugStringConvertible {
     public var debugDescription: String {
-        return "'\(title)' (\(id))"
+        let identifier = id ?? "unknown identifier"
+        return "'\(title)' (\(identifier))"
     }
 }
