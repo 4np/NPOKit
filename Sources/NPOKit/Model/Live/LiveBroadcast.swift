@@ -1,5 +1,5 @@
 //
-//  LiveEPG.swift
+//  LiveBroadcast.swift
 //  NPOKitPackageDescription
 //
 //  Created by Jeroen Wesbeek on 09/02/2018.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct LiveEPG: Codable {
+public struct LiveBroadcast: Codable {
     public private(set) var schedules: [LiveSchedule]
     public private(set) var channel: LiveChannel
     
@@ -17,7 +17,7 @@ public struct LiveEPG: Codable {
     }
 }
 
-extension LiveEPG {
+extension LiveBroadcast {
     public var currentSchedule: LiveSchedule? {
         let now = Date()
         return schedules.first(where: { $0.starts <= now && $0.ends > now })
@@ -34,8 +34,8 @@ extension LiveEPG {
     }
 }
 
-extension LiveEPG: Equatable { }
+extension LiveBroadcast: Equatable { }
 
-public func == (lhs: LiveEPG, rhs: LiveEPG) -> Bool {
+public func == (lhs: LiveBroadcast, rhs: LiveBroadcast) -> Bool {
     return lhs.channel == rhs.channel
 }
