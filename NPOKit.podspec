@@ -9,7 +9,7 @@ Pod::Spec.new do |spec|
 
   spec.platforms = { :ios => '11.0', :osx => '12.0', :tvos => '11.0' }
   spec.requires_arc = true
-  spec.pod_target_xcconfig = { 'SWIFT_VERSION' => '4.0' }
+  spec.pod_target_xcconfig = { 'SWIFT_VERSION' => '4.1' }
   spec.source = { :git => 'https://github.com/4np/NPOKit.git', :tag => "#{spec.version}" }
 
   spec.default_subspecs = 'Core'
