@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
   spec.name = 'NPOKit'
-  spec.version = '0.0.6'
+  spec.version = '0.0.7'
   spec.summary = 'NPOKit framework for interfacing with the Dutch Public Broadcaster'
   spec.homepage = 'https://github.com/4np/NPOKit'
   spec.license = { type: 'APACHE', file: 'LICENSE' }
@@ -12,10 +12,14 @@ Pod::Spec.new do |spec|
   spec.pod_target_xcconfig = { 'SWIFT_VERSION' => '4.1' }
   spec.source = { :git => 'https://github.com/4np/NPOKit.git', :tag => "#{spec.version}" }
 
-  spec.default_subspecs = 'Core'
+  spec.source_files = 'Sources/NPOKit/**/*.{swift}'
+  spec.resource_bundles = {
+    'NPOKit' => ['Sources/NPOKit/**/*.{json,png,svg}']
+  }
 
-  # main NPOKit Framework
-  spec.subspec 'Core' do |core|
-    core.source_files = 'Sources/NPOKit/**/*.{swift}'
-  end
+  #spec.default_subspecs = 'Core'
+  #
+  #spec.subspec 'Core' do |core|
+  #  core.source_files = 'Sources/NPOKit/**/*.{swift}'
+  #end
 end
