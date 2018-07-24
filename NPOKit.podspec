@@ -13,7 +13,10 @@ Pod::Spec.new do |spec|
   spec.source = { :git => 'https://github.com/4np/NPOKit.git', :tag => "#{spec.version}" }
 
   spec.source_files = 'Sources/**/*.{swift}'
-  spec.resources = 'Sources/**/*.{xib,storyboard,xcassets}'
+  spec.resources = 'Sources/**/*.{lproj,storyboard,xcdatamodeld,xib,xcassets,json}'
+#  spec.resource_bundles = {
+#    'NPOKit' => ['Sources/**/*.{lproj,storyboard,xcdatamodeld,xib,xcassets,json}', 'Sources/NPOKit/*.xcassets']
+#  }
 
   #spec.default_subspecs = 'Core'
   #
