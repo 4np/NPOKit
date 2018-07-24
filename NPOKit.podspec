@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
   spec.name = 'NPOKit'
-  spec.version = '0.0.8'
+  spec.version = '0.0.9'
   spec.summary = 'NPOKit framework for interfacing with the Dutch Public Broadcaster'
   spec.homepage = 'https://github.com/4np/NPOKit'
   spec.license = { type: 'APACHE', file: 'LICENSE' }
