@@ -12,10 +12,8 @@ Pod::Spec.new do |spec|
   spec.pod_target_xcconfig = { 'SWIFT_VERSION' => '4.1' }
   spec.source = { :git => 'https://github.com/4np/NPOKit.git', :tag => "#{spec.version}" }
 
-  spec.source_files = 'Sources/NPOKit/**/*.{swift}'
-  spec.resource_bundles = {
-    'NPOKit' => ['Sources/NPOKit/**/*.{json,png,svg}']
-  }
+  spec.source_files = 'Sources/**/*.{swift}'
+  spec.resources = 'Sources/**/*.{xib,storyboard,xcassets}'
 
   #spec.default_subspecs = 'Core'
   #
