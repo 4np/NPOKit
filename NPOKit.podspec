@@ -7,7 +7,7 @@ Pod::Spec.new do |spec|
   spec.authors = { "Jeroen Wesbeek" => 'github@osx.eu' }
   spec.documentation_url = 'https://github.com/4np/NPOKit/blob/master/README.md'
 
-  spec.platforms = { :ios => '12.0', :osx => '13.0', :tvos => '12.0' }
+  spec.platforms = { :ios => '12.0', :osx => '10.13', :tvos => '12.0' }
   spec.requires_arc = true
   spec.pod_target_xcconfig = { 'SWIFT_VERSION' => '4.2' }
   spec.source = { :git => 'https://github.com/4np/NPOKit.git', :tag => "#{spec.version}" }
